@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>美化版角色卡（含自动保存 + 头像上传）</title>
+
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            background: #e5dfd5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 85%;
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fdfbf7;
+            padding: 25px;
+            border: 3px solid #3b2f2f;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: #3b2f2f;
+        }
+        h2 {
+            border-bottom: 2px solid #3b2f2f;
+            padding-bottom: 4px;
+            margin-top: 25px;
+            color: #3b2f2f;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .box {
+            background: #f7f3eb;
+            padding: 12px;
+            border: 1px solid #b9a892;
+            border-radius: 6px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #8a7c6d;
+            background: #fff;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        .avatar-section {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .avatar-preview {
+            width: 150px;
+            height: 150px;
+            border: 3px solid #3b2f2f;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #ddd;
+            display: block;
+            margin: 10px auto;
+        }
+        #avatarInput {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>角色卡（美化 + 自动保存 + 头像上传）</h1>
+
+        <!-- 头像上传 -->
+        <h2>角色头像</h2>
+        <div class="avatar-section">
+            <img id="avatarPreview" class="avatar-preview" src="" alt="角色头像" />
+            <input type="file" id="avatarInput" accept="image/*" />
+        </div>
+
+        <!-- 属性 -->
+        <h2>属性</h2>
+        <div class="grid">
+            <div class="box">
+                <strong>力量：</strong>
+                <input id="strength" type="text" />
+            </div>
+            <div class="box">
+                <strong>敏捷：</strong>
+                <input id="dex" type="text" />
+            </div>
+            <div class="box">
+                <strong>意志：</strong>
+                <input id="will" type="text" />
+            </div>
+            <div class="box">
+                <strong>生命值：</strong>
+                <input id="hp" type="text" />
+            </div>
+        </div>
+
+        <!-- 初始装备 -->
+        <h2>初始装备</h2>
+        <div class="box">
+            <textarea id="equip"></textarea>
+        </div>
+
+        <!-- 金币 -->
+        <h2>金币</h2>
+        <div class="grid">
+            <div class="box">
+                <strong>金币：</strong>
+                <input id="gold" type="number" />
+            </div>
+            <div class="box">
+                <strong>银币：</strong>
+                <input id="silver" type="number" />
+            </div>
+            <div class="box">
+                <strong>铜币：</strong>
+                <input id="copper" type="number" />
+            </div>
+        </div>
+    </div>
+
+<script>
+// 自动保存功能
+const fields = ["strength", "dex", "will", "hp", "equip", "gold", "silver", "copper"];
+
+fields.forEach(id => {
+    const el = document.getElementById(id);
+    el.value = localStorage.getItem(id) || "";
+    el.addEventListener("input", () => localStorage.setItem(id, el.value));
+});
+
+// 头像保存
+const avatarInput = document.getElementById("avatarInput");
+const avatarPreview = document.getElementById("avatarPreview");
+avatarPreview.src = localStorage.getItem("avatar") || "";
+
+avatarInput.addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        avatarPreview.src = e.target.result;
+        localStorage.setItem("avatar", e.target.result);
+    };
+    reader.readAsDataURL(file);
+});
+</script>
+
+</body>
+</html>
