@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>角色卡 | 丰穰之墟</title>
+    <style>
+        :root {
+            --primary-color: #2a5c45;      /* 生态绿 */
+            --secondary-color: #8a7a63;    /* 沙岩色 */
+            --accent-color: #c9a86a;       /* 白垩金 */
+            --dark-color: #1a2a27;         /* 深苔藓 */
+            --light-color: #e8e4d9;        /* 羊皮纸 */
+            --magic-color: #6d8c9c;        /* 魔法蓝灰 */
+            --danger-color: #8c4a3a;       /* 铁锈红 */
+            --border-radius: 8px;
+            --shadow: 0 4px 12px rgba(26, 42, 39, 0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f3ee;
+            background-image: 
+                radial-gradient(#d8e2d7 1px, transparent 1px),
+                radial-gradient(#e8e4d9 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-gap: 30px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 头部标题 */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--accent-color);
+            position: relative;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1::after {
+            content: "✦";
+            color: var(--accent-color);
+            margin-left: 10px;
+            font-size: 1.8rem;
+        }
+
+        .header p {
+            color: var(--secondary-color);
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: linear-gradient(145deg, #ffffff, #f5f3ee);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(138, 122, 99, 0.2);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(26, 42, 39, 0.2);
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary-color), var(--accent-color));
+        }
+
+        .card-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(42, 92, 69, 0.2);
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        /* 属性部分 */
+        .attributes-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .attribute {
+            margin-bottom: 15px;
+        }
+
+        .attribute label {
+            display: block;
+            color: var(--secondary-color);
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .attribute-value {
+            display: flex;
+            align-items: center;
+        }
+
+        .value-input {
+            width: 60px;
+            height: 40px;
+            border: 2px solid var(--secondary-color);
+            border-radius: var(--border-radius);
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            background-color: white;
+            margin-right: 10px;
+            transition: var(--transition);
+        }
+
+        .value-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(201, 168, 106, 0.3);
+        }
+
+        .value-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .value-btn {
+            width: 24px;
+            height: 18px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .value-btn:hover {
+            background-color: var(--accent-color);
+        }
+
+        .exemption-attributes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .exemption-attribute {
+            text-align: center;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            background: rgba(42, 92, 69, 0.05);
+            border: 1px solid rgba(42, 92, 69, 0.1);
+        }
+
+        .exemption-attribute label {
+            display: block;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* 职业选择 */
+        .professions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .profession-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 15px;
+            background-color: white;
+            border: 2px solid var(--secondary-color);
+            border-radius: var(--border-radius);
+            color: var(--dark-color);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .profession-btn:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary-color);
+        }
+
+        .profession-btn.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* 技能网格 - 更新以适应技能值输入框 */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        @media (max-width: 1100px) {
+            .skills-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .skill-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary-color);
+            transition: var(--transition);
+        }
+
+        .skill-item:hover {
+            background-color: white;
+            border-left-color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        .skill-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .skill-label {
+            cursor: pointer;
+            font-size: 0.95rem;
+            flex-grow: 1;
+        }
+
+        .skill-value-input {
+            width: 50px;
+            height: 30px;
+            border: 1px solid var(--secondary-color);
+            border-radius: 4px;
+            text-align: center;
+            font-size: 0.9rem;
+            background-color: white;
+            color: var(--dark-color);
+            transition: var(--transition);
+        }
+
+        .skill-value-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(201, 168, 106, 0.2);
+        }
+
+        /* 角色信息 */
+        .character-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-field {
+            margin-bottom: 15px;
+        }
+
+        .info-field label {
+            display: block;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .info-field input, .info-field textarea, .info-field select {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid var(--secondary-color);
+            border-radius: var(--border-radius);
+            background-color: white;
+            color: var(--dark-color);
+            transition: var(--transition);
+        }
+
+        .info-field input:focus, .info-field textarea:focus, .info-field select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(201, 168, 106, 0.3);
+        }
+
+        .info-field textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        /* 按钮 */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1e4a36;
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #756a55;
+            transform: translateY(-3px);
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(138, 122, 99, 0.3);
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(42, 92, 69, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        /* 特殊技能高亮 */
+        .special-skill {
+            border-left-color: var(--magic-color) !important;
+            background-color: rgba(109, 140, 156, 0.05) !important;
+        }
+
+        .special-skill .skill-label::after {
+            content: " ✦";
+            color: var(--magic-color);
+            font-size: 0.9rem;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <h1>丰穰之墟</h1>
+        <p>在魔法灾变后的世界，书写你的传奇</p>
+    </div>
+
+    <div class="container">
+        <!-- 左栏：角色属性与职业 -->
+        <div class="left-column">
+            <!-- 基本属性 -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-brain"></i> 基本属性
+                </div>
+                <div class="attributes-grid">
+                    <div class="attribute">
+                        <label>心智 (Mind)</label>
+                        <div class="attribute-value">
+                            <input type="number" min="1" max="20" value="10" class="value-input" id="mind-value">
+                            <div class="value-buttons">
+                                <button class="value-btn" data-attribute="mind" data-change="1">+</button>
+                                <button class="value-btn" data-attribute="mind" data-change="-1">-</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="attribute">
+                        <label>心灵 (Spirit)</label>
+                        <div class="attribute-value">
+                            <input type="number" min="1" max="20" value="10" class="value-input" id="spirit-value">
+                            <div class="value-buttons">
+                                <button class="value-btn" data-attribute="spirit" data-change="1">+</button>
+                                <button class="value-btn" data-attribute="spirit" data-change="-1">-</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="attribute">
+                        <label>力量 (Strength)</label>
+                        <div class="attribute-value">
+                            <input type="number" min="1" max="20" value="10" class="value-input" id="strength-value">
+                            <div class="value-buttons">
+                                <button class="value-btn" data-attribute="strength" data-change="1">+</button>
+                                <button class="value-btn" data-attribute="strength" data-change="-1">-</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="attribute">
+                        <label>敏捷 (Agility)</label>
+                        <div class="attribute-value">
+                            <input type="number" min="1" max="20" value="10" class="value-input" id="agility-value">
+                            <div class="value-buttons">
+                                <button class="value-btn" data-attribute="agility" data-change="1">+</button>
+                                <button class="value-btn" data-attribute="agility" data-change="-1">-</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 豁免属性（原特殊属性） -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-shield-alt"></i> 豁免属性
+                </div>
+                <div class="exemption-attributes">
+                    <div class="exemption-attribute">
+                        <label>现实 (Reality)</label>
+                        <div class="attribute-value">
+                            <input type="number" min="1" max="10" value="5" class="value-input" id="reality-value">
+                        </div>
+                    </div>
+                    <div class="exemption-attribute">
+                        <label>恐惧 (Fear)</label>
+                        <div class="attribute-value">
+                            <input type="number" min="1" max="10" value="5" class="value-input" id="fear-value">
+                        </div>
+                    </div>
+                    <div class="exemption-attribute">
+                        <label>体质 (Constitution)</label>
+                        <div class="attribute-value">
+                            <input type="number" min="1" max="10" value="5" class="value-input" id="constitution-value">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 职业选择 -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-user-tie"></i> 职业选择
+                </div>
+                <div class="professions">
+                    <button class="profession-btn" data-profession="mercenary">佣兵</button>
+                    <button class="profession-btn" data-profession="noble">贵族</button>
+                    <button class="profession-btn" data-profession="mage">法师</button>
+                    <button class="profession-btn" data-profession="messenger">信使</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右栏：角色信息与技能 -->
+        <div class="right-column">
+            <!-- 角色信息 -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-scroll"></i> 角色信息
+                </div>
+                <div class="character-info">
+                    <div class="info-field">
+                        <label>角色名称</label>
+                        <input type="text" id="character-name" placeholder="例如：云霭姬 或 渡身客">
+                    </div>
+                    <div class="info-field">
+                        <label>称号/别名</label>
+                        <input type="text" id="character-alias" placeholder="例如：流隙行者">
+                    </div>
+                    <div class="info-field" style="grid-column: span 2;">
+                        <label>出身背景</label>
+                        <select id="character-background">
+                            <option value="">选择出身背景</option>
+                            <option value="cloud-dweller">云端遗民</option>
+                            <option value="ruin-scavenger">墟野拾荒者</option>
+                            <option value="bodyhopper">栖身者</option>
+                            <option value="magic-tainted">魔法侵染者</option>
+                            <option value="noble-exile">流放贵族</option>
+                            <option value="custom">自定义</option>
+                        </select>
+                    </div>
+                    <div class="info-field" style="grid-column: span 2;">
+                        <label>角色描述</label>
+                        <textarea id="character-description" placeholder="描述你的角色外观、性格与过往经历..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 技能选择 -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-tools"></i> 技能选择
+                </div>
+                <div class="skills-grid" id="skills-container">
+                    <!-- 技能将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 行动按钮 -->
+    <div class="action-buttons">
+        <button class="btn btn-secondary" id="reset-btn">
+            <i class="fas fa-redo"></i> 重置角色
+        </button>
+        <button class="btn btn-primary" id="save-btn">
+            <i class="fas fa-save"></i> 保存角色卡
+        </button>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+        <p>《丰穰之墟》角色创建系统 | 灵感源于宫崎骏动画与生态科幻世界</p>
+        <p>世界设定：魔法灾变后的丰穰之墟，在这里，死亡与生机交织，古老文明在云端与废墟间延续</p>
+    </div>
+
+    <script>
+        // 技能数据
+        const skills = [
+            "#杂技", "#表演", "#驯兽", "#剑术", "#敛虫", "#舞蹈", "#豪饮", 
+            "#决斗", "#礼仪", "#农业", "#枪械", "#历史", "#狩猎", "#乐器", 
+            "#医学", "#指挥", "#玄秘", "#裁缝", "#植物学", "#毒药", "#拾荒", 
+            "#歌唱", "#施法", "#运动", "#精明", "#维修", "#语言", "#飞行", "#斗殴"
+        ];
+
+        // 特殊技能（需要高亮显示）
+        const specialSkills = ["#敛虫", "#玄秘", "#施法", "#拾荒", "#植物学"];
+
+        // 初始化技能网格
+        const skillsContainer = document.getElementById('skills-container');
+        
+        skills.forEach(skill => {
+            const skillElement = document.createElement('div');
+            skillElement.className = 'skill-item';
+            
+            const skillName = skill.substring(1);
+            
+            if (specialSkills.includes(skill)) {
+                skillElement.classList.add('special-skill');
+            }
+            
+            skillElement.innerHTML = `
+                <div style="display: flex; align-items: center; flex-grow: 1;">
+                    <input type="checkbox" id="skill-${skillName}" name="skills" value="${skill}">
+                    <label for="skill-${skillName}" class="skill-label">${skillName}</label>
+                </div>
+                <input type="number" min="0" max="100" value="0" class="skill-value-input" id="skill-value-${skillName}" placeholder="数值">
+            `;
+            
+            skillsContainer.appendChild(skillElement);
+        });
+
+        // 职业选择
+        const professionButtons = document.querySelectorAll('.profession-btn');
+        let selectedProfession = null;
+        
+        professionButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除之前的选择
+                professionButtons.forEach(btn => btn.classList.remove('selected'));
+                
+                // 设置当前选择
+                button.classList.add('selected');
+                selectedProfession = button.getAttribute('data-profession');
+                
+                // 根据职业推荐技能和初始值
+                recommendSkillsForProfession(selectedProfession);
+            });
+        });
+
+        // 根据职业推荐技能和初始值
+        function recommendSkillsForProfession(profession) {
+            // 根据职业设置推荐技能和初始值
+            const recommendations = {
+                mercenary: [
+                    {skill: "#剑术", value: 15},
+                    {skill: "#枪械", value: 12},
+                    {skill: "#狩猎", value: 10},
+                    {skill: "#斗殴", value: 15},
+                    {skill: "#运动", value: 12},
+                    {skill: "#豪饮", value: 8},
+                    {skill: "#维修", value: 10}
+                ],
+                noble: [
+                    {skill: "#礼仪", value: 15},
+                    {skill: "#历史", value: 12},
+                    {skill: "#指挥", value: 10},
+                    {skill: "#表演", value: 12},
+                    {skill: "#舞蹈", value: 10},
+                    {skill: "#乐器", value: 8},
+                    {skill: "#语言", value: 12}
+                ],
+                mage: [
+                    {skill: "#玄秘", value: 18},
+                    {skill: "#施法", value: 16},
+                    {skill: "#植物学", value: 12},
+                    {skill: "#医学", value: 10},
+                    {skill: "#历史", value: 12},
+                    {skill: "#语言", value: 10},
+                    {skill: "#敛虫", value: 14}
+                ],
+                messenger: [
+                    {skill: "#飞行", value: 15},
+                    {skill: "#语言", value: 12},
+                    {skill: "#拾荒", value: 14},
+                    {skill: "#精明", value: 12},
+                    {skill: "#杂技", value: 10},
+                    {skill: "#狩猎", value: 8},
+                    {skill: "#驯兽", value: 10}
+                ]
+            };
+            
+            // 先取消所有选择并将数值设为0
+            document.querySelectorAll('input[name="skills"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            document.querySelectorAll('.skill-value-input').forEach(input => {
+                input.value = 0;
+            });
+            
+            // 设置推荐技能的选中状态和数值
+            if (recommendations[profession]) {
+                recommendations[profession].forEach(item => {
+                    const skillName = item.skill.substring(1);
+                    const checkbox = document.getElementById(`skill-${skillName}`);
+                    const valueInput = document.getElementById(`skill-value-${skillName}`);
+                    
+                    if (checkbox) {
+                        checkbox.checked = true;
+                    }
+                    if (valueInput) {
+                        valueInput.value = item.value;
+                    }
+                });
+            }
+        }
+
+        // 属性值调整
+        const valueButtons = document.querySelectorAll('.value-btn');
+        
+        valueButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const attribute = button.getAttribute('data-attribute');
+                const change = parseInt(button.getAttribute('data-change'));
+                const input = document.getElementById(`${attribute}-value`);
+                let currentValue = parseInt(input.value);
+                
+                // 确保在合理范围内
+                const newValue = currentValue + change;
+                const max = attribute === 'mind' || attribute === 'spirit' || 
+                           attribute === 'strength' || attribute === 'agility' ? 20 : 10;
+                const min = 1;
+                
+                if (newValue >= min && newValue <= max) {
+                    input.value = newValue;
+                }
+            });
+        });
+
+        // 保存角色卡
+        document.getElementById('save-btn').addEventListener('click', () => {
+            // 收集角色数据
+            const characterData = {
+                name: document.getElementById('character-name').value || "未命名角色",
+                alias: document.getElementById('character-alias').value || "",
+                background: document.getElementById('character-background').value || "",
+                description: document.getElementById('character-description').value || "",
+                profession: selectedProfession || "未选择",
+                attributes: {
+                    mind: parseInt(document.getElementById('mind-value').value),
+                    spirit: parseInt(document.getElementById('spirit-value').value),
+                    strength: parseInt(document.getElementById('strength-value').value),
+                    agility: parseInt(document.getElementById('agility-value').value),
+                    reality: parseInt(document.getElementById('reality-value').value),
+                    fear: parseInt(document.getElementById('fear-value').value),
+                    constitution: parseInt(document.getElementById('constitution-value').value)
+                },
+                skills: []
+            };
+            
+            // 收集已选技能及其数值
+            document.querySelectorAll('input[name="skills"]:checked').forEach(checkbox => {
+                const skillName = checkbox.value.substring(1);
+                const valueInput = document.getElementById(`skill-value-${skillName}`);
+                const skillValue = valueInput ? parseInt(valueInput.value) || 0 : 0;
+                
+                characterData.skills.push({
+                    name: skillName,
+                    value: skillValue
+                });
+            });
+            
+            // 显示保存结果
+            const skillCount = characterData.skills.length;
+            const totalSkillValue = characterData.skills.reduce((sum, skill) => sum + skill.value, 0);
+            
+            alert(`角色 "${characterData.name}" 已保存！\n` +
+                  `职业：${getProfessionName(characterData.profession)}\n` +
+                  `已选技能：${skillCount}项\n` +
+                  `技能总值：${totalSkillValue}\n\n` +
+                  `角色数据已输出到控制台（按F12查看）`);
+            
+            // 在控制台输出角色数据（便于调试）
+            console.log("========== 角色卡数据 ==========");
+            console.log("角色名称:", characterData.name);
+            console.log("称号:", characterData.alias);
+            console.log("职业:", getProfessionName(characterData.profession));
+            console.log("背景:", document.getElementById('character-background').options[document.getElementById('character-background').selectedIndex]?.text || "无");
+            console.log("\n属性值:");
+            console.log("  心智:", characterData.attributes.mind);
+            console.log("  心灵:", characterData.attributes.spirit);
+            console.log("  力量:", characterData.attributes.strength);
+            console.log("  敏捷:", characterData.attributes.agility);
+            console.log("  现实:", characterData.attributes.reality);
+            console.log("  恐惧:", characterData.attributes.fear);
+            console.log("  体质:", characterData.attributes.constitution);
+            
+            console.log("\n技能列表:");
+            characterData.skills.forEach(skill => {
+                console.log(`  ${skill.name}: ${skill.value}`);
+            });
+            
+            console.log("\n角色描述:", characterData.description);
+            console.log("=================================");
+        });
+
+        // 重置角色卡
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            if (confirm("确定要重置所有角色信息吗？这将清除所有已填写的内容。")) {
+                // 重置表单
+                document.getElementById('character-name').value = "";
+                document.getElementById('character-alias').value = "";
+                document.getElementById('character-background').value = "";
+                document.getElementById('character-description').value = "";
+                
+                // 重置属性
+                document.getElementById('mind-value').value = 10;
+                document.getElementById('spirit-value').value = 10;
+                document.getElementById('strength-value').value = 10;
+                document.getElementById('agility-value').value = 10;
+                document.getElementById('reality-value').value = 5;
+                document.getElementById('fear-value').value = 5;
+                document.getElementById('constitution-value').value = 5;
+                
+                // 重置职业选择
+                professionButtons.forEach(btn => btn.classList.remove('selected'));
+                selectedProfession = null;
+                
+                // 重置技能选择和数值
+                document.querySelectorAll('input[name="skills"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                document.querySelectorAll('.skill-value-input').forEach(input => {
+                    input.value = 0;
+                });
+                
+                alert("角色卡已重置！");
+            }
+        });
+
+        // 辅助函数：获取职业中文名称
+        function getProfessionName(professionKey) {
+            const professionMap = {
+                mercenary: "佣兵",
+                noble: "贵族",
+                mage: "法师",
+                messenger: "信使"
+            };
+            
+            return professionMap[professionKey] || "未知职业";
+        }
+
+        // 为输入框添加一些占位符文本
+        document.getElementById('character-name').placeholder = "例如：云霭姬、渡身客、流隙行者";
+        document.getElementById('character-alias').placeholder = "例如：朽蜕恩赐者、蜃景渊幸存者";
+        
+        // 初始化：默认选择佣兵职业
+        document.querySelector('.profession-btn[data-profession="mercenary"]').click();
+    </script>
+</body>
+</html>
